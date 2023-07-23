@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/homeStyle.css">
+  <title>Registration</title>
+</head>
+<body>
+    
+  <div class="container">
+    <div class="loginPage">
+        <div class="formBox">
+            <h1 id="title">Sign Up</h1>
+            <form id="register-form">
+                <div class="input-group">
+                    <div class="inputBox">
+                        <i class="fa-solid fa-envelope"></i>
+                        <input type="email" id="username-input" name="email" placeholder="E-mail">
+                    </div>
+                    <div class="inputBox">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="password-input" name="password" placeholder="Password">
+                    </div>
+                    <p id="error-message" class="error-message"></p>
+                    <div class="buttonField">
+                        <button type="submit">Sign Up</button>
+                    </div>
+                    
+                    <p>Already have an account? <a href="/login">Log In</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+  
+  <script src="../public/script.js"></script>
+  <script>
+    const registerForm = document.getElementById('register-form');
+    const usernameInput = document.getElementById('username-input');
+    const passwordInput = document.getElementById('password-input');
+    const errorMessage = document.getElementById('error-message');
+
+    registerForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value.trim();
+
+      fetch('/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, password })
+      })
+        .then(response => {
+          if (response.status === 409) {
+            return response.text();
+          } else if (response.status === 200) {
+            // Redirect to the login page
+            window.location.href = '/login';
+          } else {
+            throw new Error('Registration failed.');
+          }
+        })
+        .then(data => {
+          errorMessage.textContent = data;
+        })
+        .catch(error => console.error('Error registering user:', error));
+    });
+  </script>
+
+</body>
+</html>
